@@ -7,7 +7,7 @@
  * specified column.
  */
 
-#define MAXLINE 50
+#define MAXLINE 1024
 #define CUTOFF 15
 
 int mygetline(char line[], int len);
