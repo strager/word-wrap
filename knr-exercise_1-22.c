@@ -26,6 +26,12 @@ void output(char c) {
     }
 }
 
+void output_many(const char *cs, int count) {
+    for (int i = 0; i < count; ++i) {
+        output(cs[i]);
+    }
+}
+
 int main(void) {
     output_column = 0;
 
@@ -49,38 +55,35 @@ first_word_in_line:;
 
     char next_word[CUTOFF];
     int next_word_length = 0;
-    for (;;) {
-        if (output_column + next_word_length >= CUTOFF) {
-            assert(output_column + next_word_length == CUTOFF);
-            output('\n');
-            for (int j = 0; j < next_word_length; ++j) {
-                output(next_word[j]);
-            }
-            goto first_word_in_line;
-        }
+later_word_in_line:;
+    if (output_column + next_word_length >= CUTOFF) {
+        // The next word is too large to fit on the current
+        // line.
+        assert(output_column + next_word_length == CUTOFF);
+        output('\n');
+        output_many(next_word, next_word_length);
+        goto first_word_in_line;
+    }
 
-        int c = getchar();
-        if (c == EOF || c == ' ') {
-            output(' ');
-            for (int j = 0; j < next_word_length; ++j) {
-                output(next_word[j]);
-            }
-            assert(output_column <= CUTOFF);
-            next_word_length = 0;
-            if (c == EOF) {
-                goto eof;
-            }
-        } else if (c == '\n') {
-            output(' ');
-            for (int j = 0; j < next_word_length; ++j) {
-                output(next_word[j]);
-            }
-            output('\n');
-            goto first_word_in_line;
-        } else {
-            next_word[next_word_length] = c;
-            next_word_length += 1;
+    int c = getchar();
+    if (c == EOF || c == ' ') {
+        output(' ');
+        output_many(next_word, next_word_length);
+        assert(output_column <= CUTOFF);
+        next_word_length = 0;
+        if (c == EOF) {
+            goto eof;
         }
+        goto later_word_in_line;
+    } else if (c == '\n') {
+        output(' ');
+        output_many(next_word, next_word_length);
+        output('\n');
+        goto first_word_in_line;
+    } else {
+        next_word[next_word_length] = c;
+        next_word_length += 1;
+        goto later_word_in_line;
     }
 
 eof:
