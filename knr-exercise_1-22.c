@@ -18,6 +18,7 @@ static int output_column;
 
 void output(char c) {
     putchar(c);
+    fflush(stdout);
     if (c == '\n') {
         output_column = 0;
     } else {
@@ -64,12 +65,16 @@ first_word_in_line:;
             for (int j = 0; j < next_word_length; ++j) {
                 output(next_word[j]);
             }
-            assert(output_column < CUTOFF);
+            assert(output_column <= CUTOFF);
             next_word_length = 0;
             if (c == EOF) {
                 goto eof;
             }
         } else if (c == '\n') {
+            output(' ');
+            for (int j = 0; j < next_word_length; ++j) {
+                output(next_word[j]);
+            }
             output('\n');
             goto first_word_in_line;
         } else {

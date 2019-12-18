@@ -8,14 +8,21 @@ check() {
     local expected="${2}"
     printf '%s' "${input}" >input.tmp
     printf '%s' "${expected}" >expected.tmp
-    ./knr-exercise_1-22 <input.tmp >output.tmp || {
-        printf 'CRASH for input: %q\n' "${input}" >&2
+    check_file input.tmp expected.tmp
+}
+
+check_file() {
+    local input_file="${1}"
+    local expected_file="${2}"
+    local output_file=output.tmp
+    ./knr-exercise_1-22 <"${input_file}" >"${output_file}" || {
+        printf 'CRASH for input: %q\n' "$(cat "${input_file}")" >&2
         exit 1
     }
-    if diff -u expected.tmp output.tmp; then
-        printf 'PASS\n' "${input}" >&2
+    if diff -u "${expected_file}" "${output_file}"; then
+        printf 'PASS\n' >&2
     else
-        printf 'FAIL for input: %q\n' "${input}" >&2
+        printf 'FAIL for input: %q\n' "$(cat "${input_file}")" >&2
         exit 1
     fi
 }
@@ -29,3 +36,5 @@ check 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' 'AAAAAAAA
 check 012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789 012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
 check '0123456789abcefghijk 0123456789abcefghijk 0123456789abcefghijk' $'0123456789abcefghijk\n0123456789abcefghijk\n0123456789abcefghijk'
 check '0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789' $'0123456789\n0123456789\n0123456789\n0123456789\n0123456789\n0123456789\n0123456789\n0123456789'
+
+check_file gistfile1.txt gistfile1.txt.expected
