@@ -16,12 +16,14 @@
 #define CUTOFF 14
 
 static int output_column;
+static bool is_first_word_in_line;
 
 void output(char c) {
     putchar(c);
     fflush(stdout);
     if (c == '\n') {
         output_column = 0;
+        is_first_word_in_line = true;
     } else {
         output_column += 1;
     }
@@ -35,21 +37,19 @@ void output_many(const char *cs, int count) {
 
 int main(void) {
     output_column = 0;
+    is_first_word_in_line = true;
 
-    bool is_first_word_in_line = true;
     char next_word[CUTOFF];
     int next_word_length = 0;
     for (;;) {
+        int c = getchar();
         if (is_first_word_in_line) {
-            int c = getchar();
             if (c == EOF) {
                 goto eof;
-            }
-
-            if (c == ' ') {
+            } else if (c == ' ') {
+                assert(next_word_length == 0);
                 if (output_column >= CUTOFF) {
                     output('\n');
-                    assert(is_first_word_in_line);
                     continue;
                 }
                 is_first_word_in_line = false;
@@ -58,7 +58,6 @@ int main(void) {
                 assert(is_first_word_in_line);
             }
         } else {
-            int c = getchar();
             if (c == EOF || c == ' ' || c == '\n') {
                 output(' ');
                 output_many(next_word, next_word_length);
@@ -70,7 +69,6 @@ int main(void) {
                     assert(!is_first_word_in_line);
                 } else if (c == '\n') {
                     output('\n');
-                    is_first_word_in_line = true;
                 } else {
                     assert(false);
                 }
@@ -87,7 +85,6 @@ int main(void) {
                 output('\n');
                 output_many(next_word, next_word_length);
                 next_word_length = 0;
-                is_first_word_in_line = true;
                 continue;
             }
 
