@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 
 /* Exercise 1-22. Write a program to "fold" long input lines into two or more
@@ -16,38 +17,67 @@
 void printchars(char buf[], int len);
 
 int main(void) {
-    int i, j, c, lastspace;
-    char buf[CUTOFF];
+    for (;;) {
+beginning_of_line:;
+        int output_column = 0;
+first_word_in_line:;
+        for (;;) {
+            int c = getchar();
+            if (c == EOF) {
+                goto eof;
+            }
 
-    j = c = 0;
-
-    while (c != EOF) {
-        lastspace = -1;
-
-        /* After this loop, buf contains i new characters and lastspace 
-         * contains the index of the last space in the buf, or if none, -1. 
-         */
-        for (i = 0; i < CUTOFF && (c = getchar()) != EOF; i++) {
-            buf[i] = c;
-
-            if (c == ' ') {
-                lastspace = i;
-            } else if (c == '\n') {
-                i++;
+            if (c == '\n') {
+                putchar('\n');
+                output_column = 0;
+            } else if (c == ' ') {
                 break;
+            } else {
+                putchar(c);
+                output_column += 1;
             }
         }
-
-        /* Buffers containing a newline can just be printed?
-         */
-        if (i == CUTOFF && lastspace > -1 && buf[i - 1] != '\n') {
-            buf[lastspace] = '\n';
+        if (output_column >= CUTOFF) {
+            putchar('\n');
+            goto beginning_of_line;
         }
 
-        for (j = 0; j < i; j++) {
-            putchar(buf[j]);
+        char buffer[CUTOFF];
+        int i = 0;
+        for (;;) {
+            if (output_column + i >= CUTOFF) {
+                assert(output_column + i == CUTOFF);
+                putchar('\n');
+                for (int j = 0; j < i; ++j) {
+                    putchar(buffer[j]);
+                }
+                output_column = i;
+                goto first_word_in_line;
+            }
+
+            int c = getchar();
+            if (c == EOF || c == ' ') {
+                putchar(' ');
+                output_column += 1;
+                for (int j = 0; j < i; ++j) {
+                    putchar(buffer[j]);
+                    output_column += 1;
+                }
+                assert(output_column < CUTOFF);
+                i = 0;
+                if (c == EOF) {
+                    goto eof;
+                }
+            } else if (c == '\n') {
+                putchar('\n');
+                goto beginning_of_line;
+            } else {
+                buffer[i] = c;
+                i += 1;
+            }
         }
     }
+eof:
 
     return 0;
 }
