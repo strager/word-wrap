@@ -37,6 +37,7 @@ int main(void) {
     output_column = 0;
 
 first_word_in_line:;
+    assert(output_column == 0);
     for (;;) {
         int c = getchar();
         if (c == EOF) {
@@ -63,6 +64,7 @@ later_word_in_line:;
         assert(output_column + next_word_length == CUTOFF);
         output('\n');
         output_many(next_word, next_word_length);
+        next_word_length = 0;
         goto first_word_in_line;
     }
 
@@ -70,11 +72,11 @@ later_word_in_line:;
     if (c == EOF || c == ' ' || c == '\n') {
         output(' ');
         output_many(next_word, next_word_length);
+        next_word_length = 0;
+        assert(output_column <= CUTOFF);
         if (c == EOF) {
             goto eof;
         } else if (c == ' ') {
-            assert(output_column <= CUTOFF);
-            next_word_length = 0;
             goto later_word_in_line;
         } else if (c == '\n') {
             output('\n');
