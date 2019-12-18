@@ -41,24 +41,22 @@ int main(void) {
     int next_word_length = 0;
     for (;;) {
         if (is_first_word_in_line) {
-            for (;;) {
-                int c = getchar();
-                if (c == EOF) {
-                    goto eof;
-                }
+            int c = getchar();
+            if (c == EOF) {
+                goto eof;
+            }
 
-                if (c == ' ') {
-                    break;
-                } else {
-                    output(c);
+            if (c == ' ') {
+                if (output_column >= CUTOFF) {
+                    output('\n');
+                    assert(is_first_word_in_line);
+                    continue;
                 }
-            }
-            if (output_column >= CUTOFF) {
-                output('\n');
+                is_first_word_in_line = false;
+            } else {
+                output(c);
                 assert(is_first_word_in_line);
-                continue;
             }
-            is_first_word_in_line = false;
         } else {
             if (output_column + next_word_length >= CUTOFF) {
                 // The next word is too large to fit on the current
