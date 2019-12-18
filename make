@@ -37,5 +37,9 @@ check 01234567890123456789012345678901234567890123456789012345678901234567890123
 check '0123456789abcefghijk 0123456789abcefghijk 0123456789abcefghijk' $'0123456789abcefghijk\n0123456789abcefghijk\n0123456789abcefghijk'
 check '0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789' $'0123456789\n0123456789\n0123456789\n0123456789\n0123456789\n0123456789\n0123456789\n0123456789'
 check '                                ' $'              \n              \n  '
+check $' Hello brave new \n World' $' Hello brave\nnew \n World'
+check $' Hello brave  new \n World' $' Hello brave \nnew \n World'
+check $' Hello brave   new \n World' $' Hello brave  \nnew \n World'
+check $' Hello brave    new \n World' $' Hello brave  \n new \n World'
 
 check_file gistfile1.txt gistfile2.txt
