@@ -26,61 +26,59 @@ void output(char c) {
 }
 
 int main(void) {
-    for (;;) {
-        output_column = 0;
+    output_column = 0;
 first_word_in_line:;
-        for (;;) {
-            int c = getchar();
-            if (c == EOF) {
-                goto eof;
-            }
-
-            if (c == '\n') {
-                output('\n');
-            } else if (c == ' ') {
-                break;
-            } else {
-                output(c);
-            }
+    for (;;) {
+        int c = getchar();
+        if (c == EOF) {
+            goto eof;
         }
-        if (output_column >= CUTOFF) {
+
+        if (c == '\n') {
             output('\n');
+        } else if (c == ' ') {
+            break;
+        } else {
+            output(c);
+        }
+    }
+    if (output_column >= CUTOFF) {
+        output('\n');
+        goto first_word_in_line;
+    }
+
+    char buffer[CUTOFF];
+    int i = 0;
+    for (;;) {
+        if (output_column + i >= CUTOFF) {
+            assert(output_column + i == CUTOFF);
+            output('\n');
+            for (int j = 0; j < i; ++j) {
+                output(buffer[j]);
+            }
             goto first_word_in_line;
         }
 
-        char buffer[CUTOFF];
-        int i = 0;
-        for (;;) {
-            if (output_column + i >= CUTOFF) {
-                assert(output_column + i == CUTOFF);
-                output('\n');
-                for (int j = 0; j < i; ++j) {
-                    output(buffer[j]);
-                }
-                goto first_word_in_line;
+        int c = getchar();
+        if (c == EOF || c == ' ') {
+            output(' ');
+            for (int j = 0; j < i; ++j) {
+                output(buffer[j]);
             }
-
-            int c = getchar();
-            if (c == EOF || c == ' ') {
-                output(' ');
-                for (int j = 0; j < i; ++j) {
-                    output(buffer[j]);
-                }
-                assert(output_column < CUTOFF);
-                i = 0;
-                if (c == EOF) {
-                    goto eof;
-                }
-            } else if (c == '\n') {
-                output('\n');
-                goto first_word_in_line;
-            } else {
-                buffer[i] = c;
-                i += 1;
+            assert(output_column < CUTOFF);
+            i = 0;
+            if (c == EOF) {
+                goto eof;
             }
+        } else if (c == '\n') {
+            output('\n');
+            goto first_word_in_line;
+        } else {
+            buffer[i] = c;
+            i += 1;
         }
     }
-eof:
 
+eof:
     return 0;
 }
