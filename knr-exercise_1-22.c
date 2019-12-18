@@ -27,6 +27,7 @@ void output(char c) {
 
 int main(void) {
     output_column = 0;
+
 first_word_in_line:;
     for (;;) {
         int c = getchar();
@@ -34,9 +35,7 @@ first_word_in_line:;
             goto eof;
         }
 
-        if (c == '\n') {
-            output('\n');
-        } else if (c == ' ') {
+        if (c == ' ') {
             break;
         } else {
             output(c);
@@ -47,14 +46,14 @@ first_word_in_line:;
         goto first_word_in_line;
     }
 
-    char buffer[CUTOFF];
-    int i = 0;
+    char next_word[CUTOFF];
+    int next_word_length = 0;
     for (;;) {
-        if (output_column + i >= CUTOFF) {
-            assert(output_column + i == CUTOFF);
+        if (output_column + next_word_length >= CUTOFF) {
+            assert(output_column + next_word_length == CUTOFF);
             output('\n');
-            for (int j = 0; j < i; ++j) {
-                output(buffer[j]);
+            for (int j = 0; j < next_word_length; ++j) {
+                output(next_word[j]);
             }
             goto first_word_in_line;
         }
@@ -62,11 +61,11 @@ first_word_in_line:;
         int c = getchar();
         if (c == EOF || c == ' ') {
             output(' ');
-            for (int j = 0; j < i; ++j) {
-                output(buffer[j]);
+            for (int j = 0; j < next_word_length; ++j) {
+                output(next_word[j]);
             }
             assert(output_column < CUTOFF);
-            i = 0;
+            next_word_length = 0;
             if (c == EOF) {
                 goto eof;
             }
@@ -74,8 +73,8 @@ first_word_in_line:;
             output('\n');
             goto first_word_in_line;
         } else {
-            buffer[i] = c;
-            i += 1;
+            next_word[next_word_length] = c;
+            next_word_length += 1;
         }
     }
 
