@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 /* Exercise 1-22. Write a program to "fold" long input lines into two or more
@@ -66,20 +67,21 @@ later_word_in_line:;
     }
 
     int c = getchar();
-    if (c == EOF || c == ' ') {
+    if (c == EOF || c == ' ' || c == '\n') {
         output(' ');
         output_many(next_word, next_word_length);
-        assert(output_column <= CUTOFF);
-        next_word_length = 0;
         if (c == EOF) {
             goto eof;
+        } else if (c == ' ') {
+            assert(output_column <= CUTOFF);
+            next_word_length = 0;
+            goto later_word_in_line;
+        } else if (c == '\n') {
+            output('\n');
+            goto first_word_in_line;
+        } else {
+            assert(false);
         }
-        goto later_word_in_line;
-    } else if (c == '\n') {
-        output(' ');
-        output_many(next_word, next_word_length);
-        output('\n');
-        goto first_word_in_line;
     } else {
         next_word[next_word_length] = c;
         next_word_length += 1;
