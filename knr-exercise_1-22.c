@@ -5,66 +5,49 @@
  * n-th column of input. Make sure your program does something intelligent
  * with very long lines, and if there are no blanks or tabs before the
  * specified column.
+ *
+ * 0. Should handle input lines and words of arbitrary length.
+ * 1. Breaking can only be done at whitespace.
+ * 2. Output must contain as few lines as possible.
  */
 
-#define MAXLINE 1024
 #define CUTOFF 15
 
-int mygetline(char line[], int len);
-void fold(char line[], int cutoff);
+void printchars(char buf[], int len);
 
 int main(void) {
-    int i;
-    char line[MAXLINE];
+    int i, j, c, lastspace;
+    char buf[CUTOFF];
 
-    for (i = 0; i < MAXLINE; i++) {
-        line[i] = 0;
-    }
+    j = c = 0;
 
-    while (mygetline(line, MAXLINE) > 0) {
-        fold(line, CUTOFF);
-        printf("%s", line);
+    while (c != EOF) {
+        lastspace = -1;
+
+        /* After this loop, buf contains i new characters and lastspace 
+         * contains the index of the last space in the buf, or if none, -1. 
+         */
+        for (i = 0; i < CUTOFF && (c = getchar()) != EOF; i++) {
+            buf[i] = c;
+
+            if (c == ' ') {
+                lastspace = i;
+            } else if (c == '\n') {
+                i++;
+                break;
+            }
+        }
+
+        /* Buffers containing a newline can just be printed?
+         */
+        if (i == CUTOFF && lastspace > -1 && buf[i - 1] != '\n') {
+            buf[lastspace] = '\n';
+        }
+
+        for (j = 0; j < i; j++) {
+            putchar(buf[j]);
+        }
     }
 
     return 0;
-}
-
-void fold(char line[], int cutoff) {
-    int i, len, lastspace, chars_folded;
-
-    lastspace = -1;
-    chars_folded = 0;
-
-    for (len = 0; line[len] != '\0'; len++)
-        ;
-
-    for (i = 0; i < len; i++) {
-        if (line[i] == ' ') {
-            lastspace = i;
-        }
-
-        if (i - chars_folded >= cutoff && lastspace >= 0) {
-            line[lastspace] = '\n';
-            chars_folded += (lastspace - chars_folded) + 1;
-            i = lastspace;
-            lastspace = -1;
-        }
-    }
-}
-
-int mygetline(char line[], int maxlen) {
-    int i, c;
-
-    for (i = 0; i < maxlen - 1 && (c = getchar()) != EOF; i++) {
-        line[i] = c;
-
-        if (c == '\n') {
-            i++;
-            break;
-        }
-    }
-
-    line[i] = '\0';
-
-    return i;
 }
