@@ -45,7 +45,7 @@ int main(void) {
         int c = getchar();
         if (is_first_word_in_line) {
             if (c == EOF) {
-                goto eof;
+                break;
             } else if (c == ' ') {
                 assert(next_word_length == 0);
                 if (output_column >= CUTOFF) {
@@ -64,7 +64,7 @@ int main(void) {
                 next_word_length = 0;
                 assert(output_column <= CUTOFF);
                 if (c == EOF) {
-                    goto eof;
+                    break;
                 } else if (c == ' ') {
                     assert(!is_first_word_in_line);
                 } else if (c == '\n') {
@@ -91,6 +91,5 @@ int main(void) {
         }
     }
 
-eof:
     return 0;
 }
