@@ -58,17 +58,6 @@ int main(void) {
                 assert(is_first_word_in_line);
             }
         } else {
-            if (output_column + next_word_length >= CUTOFF) {
-                // The next word is too large to fit on the current
-                // line.
-                assert(output_column + next_word_length == CUTOFF);
-                output('\n');
-                output_many(next_word, next_word_length);
-                next_word_length = 0;
-                is_first_word_in_line = true;
-                continue;
-            }
-
             int c = getchar();
             if (c == EOF || c == ' ' || c == '\n') {
                 output(' ');
@@ -79,11 +68,9 @@ int main(void) {
                     goto eof;
                 } else if (c == ' ') {
                     assert(!is_first_word_in_line);
-                    continue;
                 } else if (c == '\n') {
                     output('\n');
                     is_first_word_in_line = true;
-                    continue;
                 } else {
                     assert(false);
                 }
@@ -91,8 +78,19 @@ int main(void) {
                 next_word[next_word_length] = c;
                 next_word_length += 1;
                 assert(!is_first_word_in_line);
+            }
+
+            if (output_column + next_word_length >= CUTOFF) {
+                // The next word is too large to fit on the
+                // current line.
+                assert(output_column + next_word_length == CUTOFF);
+                output('\n');
+                output_many(next_word, next_word_length);
+                next_word_length = 0;
+                is_first_word_in_line = true;
                 continue;
             }
+
         }
     }
 
