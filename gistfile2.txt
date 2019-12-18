@@ -7,7 +7,7 @@ this line ends
 in a line
 break and this
 in blanks     
- 
+
 t
 hisisasuperlongword
 ab cd

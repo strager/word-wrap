@@ -12,7 +12,7 @@
  * 2. Output must contain as few lines as possible.
  */
 
-#define CUTOFF 15
+#define CUTOFF 14
 
 static int output_column;
 
