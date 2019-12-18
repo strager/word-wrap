@@ -18,7 +18,7 @@
 static int output_column;
 static bool is_first_word_in_line;
 
-void output(char c) {
+static void output(char c) {
     putchar(c);
     fflush(stdout);
     if (c == '\n') {
@@ -29,7 +29,7 @@ void output(char c) {
     }
 }
 
-void output_many(const char *cs, int count) {
+static void output_many(const char *cs, int count) {
     for (int i = 0; i < count; ++i) {
         output(cs[i]);
     }
@@ -87,7 +87,6 @@ int main(void) {
                 next_word_length = 0;
                 continue;
             }
-
         }
     }
 
