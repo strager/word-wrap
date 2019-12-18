@@ -14,12 +14,20 @@
 
 #define CUTOFF 15
 
-void printchars(char buf[], int len);
+static int output_column;
+
+void output(char c) {
+    putchar(c);
+    if (c == '\n') {
+        output_column = 0;
+    } else {
+        output_column += 1;
+    }
+}
 
 int main(void) {
     for (;;) {
-beginning_of_line:;
-        int output_column = 0;
+        output_column = 0;
 first_word_in_line:;
         for (;;) {
             int c = getchar();
@@ -28,18 +36,16 @@ first_word_in_line:;
             }
 
             if (c == '\n') {
-                putchar('\n');
-                output_column = 0;
+                output('\n');
             } else if (c == ' ') {
                 break;
             } else {
-                putchar(c);
-                output_column += 1;
+                output(c);
             }
         }
         if (output_column >= CUTOFF) {
-            putchar('\n');
-            goto beginning_of_line;
+            output('\n');
+            goto first_word_in_line;
         }
 
         char buffer[CUTOFF];
@@ -47,21 +53,18 @@ first_word_in_line:;
         for (;;) {
             if (output_column + i >= CUTOFF) {
                 assert(output_column + i == CUTOFF);
-                putchar('\n');
+                output('\n');
                 for (int j = 0; j < i; ++j) {
-                    putchar(buffer[j]);
+                    output(buffer[j]);
                 }
-                output_column = i;
                 goto first_word_in_line;
             }
 
             int c = getchar();
             if (c == EOF || c == ' ') {
-                putchar(' ');
-                output_column += 1;
+                output(' ');
                 for (int j = 0; j < i; ++j) {
-                    putchar(buffer[j]);
-                    output_column += 1;
+                    output(buffer[j]);
                 }
                 assert(output_column < CUTOFF);
                 i = 0;
@@ -69,8 +72,8 @@ first_word_in_line:;
                     goto eof;
                 }
             } else if (c == '\n') {
-                putchar('\n');
-                goto beginning_of_line;
+                output('\n');
+                goto first_word_in_line;
             } else {
                 buffer[i] = c;
                 i += 1;
