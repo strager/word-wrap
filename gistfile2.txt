@@ -1,14 +1,3 @@
-INPUT:
-t hisisaverylong
-li ne th at sh ou ld be broken
-this line ends
-in a line break and this
-in blanks      
-t hisisasuperlongword ab cd
-another looongword ab cd
-thisisagigalongwordspanningmultiplebufs ab cd
-
-EXPECTED:
 t
 hisisaverylong
 li ne th at sh
