@@ -36,58 +36,66 @@ void output_many(const char *cs, int count) {
 int main(void) {
     output_column = 0;
 
-first_word_in_line:;
-    assert(output_column == 0);
-    for (;;) {
-        int c = getchar();
-        if (c == EOF) {
-            goto eof;
-        }
-
-        if (c == ' ') {
-            break;
-        } else {
-            output(c);
-        }
-    }
-    if (output_column >= CUTOFF) {
-        output('\n');
-        goto first_word_in_line;
-    }
-
+    bool is_first_word_in_line = true;
     char next_word[CUTOFF];
     int next_word_length = 0;
-later_word_in_line:;
-    if (output_column + next_word_length >= CUTOFF) {
-        // The next word is too large to fit on the current
-        // line.
-        assert(output_column + next_word_length == CUTOFF);
-        output('\n');
-        output_many(next_word, next_word_length);
-        next_word_length = 0;
-        goto first_word_in_line;
-    }
+    for (;;) {
+        if (is_first_word_in_line) {
+            for (;;) {
+                int c = getchar();
+                if (c == EOF) {
+                    goto eof;
+                }
 
-    int c = getchar();
-    if (c == EOF || c == ' ' || c == '\n') {
-        output(' ');
-        output_many(next_word, next_word_length);
-        next_word_length = 0;
-        assert(output_column <= CUTOFF);
-        if (c == EOF) {
-            goto eof;
-        } else if (c == ' ') {
-            goto later_word_in_line;
-        } else if (c == '\n') {
-            output('\n');
-            goto first_word_in_line;
+                if (c == ' ') {
+                    break;
+                } else {
+                    output(c);
+                }
+            }
+            if (output_column >= CUTOFF) {
+                output('\n');
+                assert(is_first_word_in_line);
+                continue;
+            }
+            is_first_word_in_line = false;
         } else {
-            assert(false);
+            if (output_column + next_word_length >= CUTOFF) {
+                // The next word is too large to fit on the current
+                // line.
+                assert(output_column + next_word_length == CUTOFF);
+                output('\n');
+                output_many(next_word, next_word_length);
+                next_word_length = 0;
+                is_first_word_in_line = true;
+                continue;
+            }
+
+            int c = getchar();
+            if (c == EOF || c == ' ' || c == '\n') {
+                output(' ');
+                output_many(next_word, next_word_length);
+                next_word_length = 0;
+                assert(output_column <= CUTOFF);
+                if (c == EOF) {
+                    goto eof;
+                } else if (c == ' ') {
+                    assert(!is_first_word_in_line);
+                    continue;
+                } else if (c == '\n') {
+                    output('\n');
+                    is_first_word_in_line = true;
+                    continue;
+                } else {
+                    assert(false);
+                }
+            } else {
+                next_word[next_word_length] = c;
+                next_word_length += 1;
+                assert(!is_first_word_in_line);
+                continue;
+            }
         }
-    } else {
-        next_word[next_word_length] = c;
-        next_word_length += 1;
-        goto later_word_in_line;
     }
 
 eof:
